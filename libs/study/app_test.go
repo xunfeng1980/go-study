@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"strconv"
@@ -202,4 +203,41 @@ func TestPanicAndRecover(t *testing.T) {
 	for _, v := range []int{1, 2, 0, 6} {
 		div60(v)
 	}
+}
+
+func TestChan(t *testing.T) {
+	countFunc := func(max int) <-chan int {
+		ch := make(chan int)
+		go func() {
+			for i := 0; i < max; i++ {
+				ch <- i
+			}
+			close(ch)
+		}()
+		return ch
+	}
+
+	for i := range countFunc(10) {
+		fmt.Println(i)
+	}
+}
+
+func TestUnmarshal(t *testing.T) {
+	var u User
+	jsonStr := "{\"Name\":\"aa\",\"Age\":1}"
+	err := json.Unmarshal([]byte(jsonStr), &u)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(u)
+	assert.Equal(t, u.Name, "aa")
+
+	u.Name = "bb"
+	uObj, err := json.Marshal(u)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(uObj))
+	assert.Contains(t, string(uObj), "bb")
+
 }
