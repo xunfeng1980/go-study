@@ -69,11 +69,16 @@ func TestNewMap(t *testing.T) {
 
 }
 
+type User struct {
+	Name string
+	Age  int
+}
+
 func TestType(t *testing.T) {
-	type User struct {
-		Name string
-		Age  int
-	}
+	//type User struct {
+	//	Name string
+	//	Age  int
+	//}
 
 	u1 := User{
 		Name: "A",
@@ -86,11 +91,6 @@ func TestType(t *testing.T) {
 	}
 	assert.Equal(t, u1.Age+10, u2.Age)
 
-}
-
-type User struct {
-	Name string
-	Age  int
 }
 
 func (u *User) notify() {
@@ -108,8 +108,11 @@ type NestUser struct {
 
 func TestEmbedType(t *testing.T) {
 	u := NestUser{User{Name: "A", Age: 1}, User{Name: "A", Age: 1}}
+
+	// ==
 	u.User.notify()
 	u.notify()
+
 	u.U.notify()
 }
 
@@ -130,4 +133,73 @@ func TestGoroutine(t *testing.T) {
 		}
 	}()
 	wg.Wait()
+}
+
+type LogicProvider1 struct {
+}
+
+func (lp *LogicProvider1) Process(data string) {
+	fmt.Println("LogicProvider1: " + data)
+}
+
+type LogicProvider2 struct {
+}
+
+func (lp *LogicProvider2) Process(data string) {
+	fmt.Println("LogicProvider2: " + data)
+}
+
+type Logic interface {
+	Process(data string)
+}
+
+type Logic1 interface {
+	Process(data string)
+}
+
+type Client struct {
+	Logic
+}
+
+type MixClient struct {
+	Logic
+	Logic1
+}
+
+func TestInterface(t *testing.T) {
+	l := LogicProvider1{}
+	l.Process("test")
+	c := Client{&LogicProvider1{}}
+	c.Process("test")
+
+	l1 := LogicProvider2{}
+	l1.Process("test")
+	c1 := Client{&LogicProvider2{}}
+	c1.Process("test")
+
+	//m := MixClient{&LogicProvider1{}, &LogicProvider2{}}
+	//// ./app_test.go:181:4: ambiguous selector m.Process
+	//m.Process("test")
+
+}
+
+func TestEmptyInterface(t *testing.T) {
+	var i interface{}
+	i = 20
+	assert.Equal(t, i, 20)
+}
+
+func TestPanicAndRecover(t *testing.T) {
+	div60 := func(i int) {
+		defer func() {
+			if v := recover(); v != nil {
+				fmt.Println(v)
+			}
+		}()
+		fmt.Println(60 / i)
+	}
+
+	for _, v := range []int{1, 2, 0, 6} {
+		div60(v)
+	}
 }
