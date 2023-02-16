@@ -1,0 +1,19 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "gin-casbin-demo_lib",
+    srcs = ["app.go"],
+    importpath = "github.com/xunfeng1980/go-study/services/gin-casbin-demo",
+    visibility = ["//visibility:private"],
+    deps = [
+        "@com_github_casbin_casbin_v2//:go_default_library",
+        "@com_github_gin_contrib_authz//:go_default_library",
+        "@com_github_gin_gonic_gin//:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "gin-casbin-demo",
+    embed = [":gin-casbin-demo_lib"],
+    visibility = ["//visibility:public"],
+)

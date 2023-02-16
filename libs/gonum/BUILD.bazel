@@ -1,0 +1,15 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "gonum_lib",
+    srcs = ["gonum.go"],
+    importpath = "github.com/xunfeng1980/go-study/libs/gonum",
+    visibility = ["//visibility:private"],
+    deps = ["@org_gonum_v1_gonum//stat:go_default_library"],
+)
+
+go_binary(
+    name = "gonum",
+    embed = [":gonum_lib"],
+    visibility = ["//visibility:public"],
+)
