@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+
 	"strconv"
 	"sync"
 	"testing"
@@ -13,6 +14,7 @@ func TestMake(t *testing.T) {
 	slice := make([]string, 5)
 	assert.Equal(t, len(slice), 5)
 	assert.Equal(t, cap(slice), 5)
+
 }
 
 func TestMakeLenNotEqCap(t *testing.T) {
